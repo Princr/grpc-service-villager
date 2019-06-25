@@ -1,0 +1,17 @@
+{
+  "name": "grpc-service",
+  "version": "0.0.0",
+  "description": "GRPC Service for TV",
+  "main": "server.js",
+  "scripts": {
+    "test": "grpc"
+  },
+  "keywords": [
+    "grpc"
+  ],
+  "author": "DevelopePrince",
+  "license": "ISC",
+  "dependencies": {
+    "grpc": "^1.21.1"
+  }
+}
