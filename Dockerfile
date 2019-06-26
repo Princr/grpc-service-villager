@@ -1,18 +1,18 @@
-FROM node:10.16.0-alpine
+FROM alpine:latest
+
+RUN apk add -no-cache nodejs npm
 
 # Set a working directory
-WORKDIR /usr/
+WORKDIR /grpc-service    
 
-COPY ./build/package.json .
-COPY ./build/yarn.lock .
+COPY . /grpc-service
 
 # Install Node.js dependencies
-RUN yarn install --production --no-progress
-
-# Run the container under "node" user by default
-USER node
+RUN npm install
 
 # Set NODE_ENV env variable to "production" for faster expressjs
 ENV NODE_ENV production
 
 CMD [ "node", "server.js" ]
+
+EXPOSE 9005

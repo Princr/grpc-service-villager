@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package villagestreamingworld;
+
+service AuthenticateUser {
+    // Sends multiple greetings
+    rpc BasicAuth (UserRequest) returns (stream UserReply) {}
+  }
+
+message UserRequest {
+    string email = 1;
+    string password = 2;
+}
+
+message UserReply {
+    string id = 1;
+    string name = 2;
+    string email = 3;
+    string picture = 4;
+    string token = 5;
+}
