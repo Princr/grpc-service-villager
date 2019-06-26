@@ -1,11 +1,21 @@
 syntax = "proto3";
 
-package villagestreamingworld;
+package village;
 
 service AuthenticateUser {
     // Sends multiple greetings
     rpc BasicAuth (UserRequest) returns (stream UserReply) {}
   }
+
+service Chat { //Service class to be used by the clients
+    rpc join(stream Message) returns (stream Message){}
+    rpc send(Message) returns (Message){}
+}
+ 
+message Message { //Information that will be passed between client and service
+    string user = 1;
+    string text = 2;
+}
 
 message UserRequest {
     string email = 1;

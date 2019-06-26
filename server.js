@@ -6,26 +6,54 @@ const options = {
     oneofs: true
   }
 
+const SERVER_ADDRESS = "0.0.0.0:5001";
+
 const PROTO_PATH = __dirname + '/village.proto';
 const grpc = require('grpc');
 const protoLoader = require('@grpc/proto-loader');
 const packageDefinition = protoLoader.loadSync(
-    PROTO_PATH,
-    options
+      PROTO_PATH,
+      options
     );
-const user_proto = grpc.loadPackageDefinition(packageDefinition).user;
 
+let proto = grpc.loadPackageDefinition(
+  protoLoader.loadSync(PROTO_PATH, {
+    keepCase: true,
+    longs: String,
+    enums: String,
+    defaults: true,
+    oneofs: true
+  })
+);
 
-createUser = (call, callback) =>{
-  callback(null, {message: 'prince@techvillage.org.zw' + call.request.email})
+let users = [];
+
+// Receive message from client joining
+join = (call, callback) => {
+  users.push(call);
+  notifyChat({ user: "Server", text: "new user joined ..." });
 }
-
+  
+// Receive message from client
+send = (call, callback) => {
+  notifyChat(call.request);
+}
+  
+// Send message to all connected clients
+notifyChat = (message) => {
+  users.forEach(user => {
+    user.write(message);
+  });
+}
+  
 main = () => {
-  const server = new grpc.Server();
-  server.addService(user_proto.BasicAuth.service, {BasicAuth: BasicAuth})
-  server.bind('0.0.0.0:50051', grpc.ServerCredentials.createInsecure());
+  const server = new grpc.Server()
+  server.addService(proto.village.Chat.service, { join: join, send: send });
+    
+  server.bind(SERVER_ADDRESS, grpc.ServerCredentials.createInsecure());
+    
   server.start();
-  console.log(`Server now running on port 50051`)
 }
+
 
 main();
